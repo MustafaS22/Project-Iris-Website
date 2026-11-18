@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { ArrowDown, ArrowRight, Pause, Play } from 'lucide-react';
+import { type PointerEvent, useEffect, useRef, useState } from 'react';
+import { ArrowDown, ArrowRight, Play } from 'lucide-react';
 import { Face, Footer, Nav } from './components';
 import { usePlatform } from './use-platform';
 import { ProductTour } from './product-tour';
@@ -9,7 +9,7 @@ import './home.css';
 
 export default function Home() {
   const platform = usePlatform();
-  const [paused, setPaused] = useState(false);
+  const character = useRef<HTMLDivElement>(null);
   const [reduced, setReduced] = useState(false);
   useEffect(() => {
     const query = matchMedia('(prefers-reduced-motion: reduce)');
@@ -18,12 +18,28 @@ export default function Home() {
     query.addEventListener('change', sync);
     return () => query.removeEventListener('change', sync);
   }, []);
-  const animated = !paused && !reduced;
+  const animated = !reduced;
+
+  function followCursor(event: PointerEvent<HTMLElement>) {
+    if (!animated || event.pointerType === 'touch' || !character.current) return;
+    const bounds = character.current.getBoundingClientRect();
+    const x = event.clientX - (bounds.left + bounds.width / 2);
+    const y = event.clientY - (bounds.top + bounds.height / 2);
+    const distance = Math.max(Math.hypot(x, y), 125);
+    character.current.style.setProperty('--iris-look-x', `${x / distance * 15}px`);
+    character.current.style.setProperty('--iris-look-y', `${y / distance * 11}px`);
+  }
+
+  function resetGaze() {
+    character.current?.style.removeProperty('--iris-look-x');
+    character.current?.style.removeProperty('--iris-look-y');
+  }
+
   const download = platform ? `/download?platform=${platform}` : '/download';
   const device = platform === 'macos' ? 'Mac' : platform === 'windows' ? 'PC' : 'computer';
 
   return <><Nav/><main className="iris-product" data-motion={animated ? "on" : "off"}>
-    <section className="product-hero product-width" aria-labelledby="product-title">
+    <section className="product-hero product-width" aria-labelledby="product-title" onPointerMove={followCursor} onPointerLeave={resetGaze} onPointerCancel={resetGaze}>
       <div className="product-intro">
         <div className="product-signature"><Face small/> Iris by AriZe</div>
         <h1 id="product-title">An AI assistant<br/>for your {device}.</h1>
@@ -34,13 +50,11 @@ export default function Home() {
         </div>
         <p className="product-platforms">macOS 15+ on Apple Silicon <span>·</span> <a href="/windows">Windows 1.0 test edition</a></p>
       </div>
-      <div className="product-character">
-        <div className="product-orbit" aria-hidden="true"><span/><span/></div>
-        <img className="product-avatar" src="/images/tour/avatar.png" width="272" height="216" alt="Iris’s floating avatar" fetchPriority="high"/>
+      <div className="product-character" ref={character}>
+        <div className="product-avatar" role="img" aria-label="Iris’s floating avatar">
+          <div className="product-eyes" aria-hidden="true"><span/><span/></div>
+        </div>
         <div className="product-character-shadow" aria-hidden="true"/>
-        {!reduced && <button className="product-motion" type="button" onClick={() => setPaused(value => !value)}>
-          {paused ? <Play size={14}/> : <Pause size={14}/>} {paused ? 'Resume motion' : 'Pause motion'}
-        </button>}
       </div>
     </section>
 
