@@ -1,0 +1,17 @@
+import assert from 'node:assert/strict';
+import {appcast,updateMetadata} from '../lib/appcast.ts';
+const signature=Buffer.alloc(64,3).toString('base64');
+const release={id:'release/32',version:'2.0.32',minimum:'15.0',created:'2026-11-17T12:00:00Z',size:15000000,notes:'Safe <script>alert("x")</script> & notes'};
+assert.equal(updateMetadata({}),undefined);
+for(const values of [{build:'232'},{signature},{build:'-1',signature},{build:'232',signature:'bad'}])assert.throws(()=>updateMetadata(values));
+const metadata=updateMetadata({build:'232',signature});
+const feed=appcast('https://iris.example',release,metadata);
+assert.ok(feed.includes('sparkle:version>232<'));
+assert.ok(feed.includes('sparkle:edSignature="'+signature+'"'));
+assert.ok(feed.includes('/api/download/release%2F32'));
+assert.ok(feed.includes('&lt;script&gt;'));
+assert.ok(!feed.includes('<script>'));
+assert.ok(!appcast('https://iris.example',release).includes('<item>'));
+assert.ok(!appcast('https://iris.example',{...release,version:'windows-1.0'},metadata).includes('<item>'));
+assert.ok(!appcast('https://iris.example',null).includes('<item>'));
+console.log('Signed update feed: 13 checks passed, unsigned/Windows releases excluded.');

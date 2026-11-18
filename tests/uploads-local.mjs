@@ -1,0 +1,41 @@
+// Runs only against the disposable localhost QA server documented in README.
+import assert from 'node:assert/strict';
+import {createHmac} from 'node:crypto';
+import {readFile} from 'node:fs/promises';
+const origin='http://127.0.0.1:5178';
+const secret='local-qa-only-secret-never-valid-in-production-2026';
+function token(sub='local-upload-qa',exp=Date.now()+600000){const body=Buffer.from(JSON.stringify({sub,email:'qa@example.invalid',exp})).toString('base64url');return body+'.'+createHmac('sha256',secret).update(body).digest('base64url');}
+const auth={Cookie:'iris_session='+token(),Origin:origin};
+async function request(path,method='GET',body,headers=auth){return fetch(origin+'/api/'+path,{method,headers:{...headers,...(body&&!(body instanceof Uint8Array)?{'Content-Type':'application/json'}:{})},body:body instanceof Uint8Array?body:body?JSON.stringify(body):undefined});}
+const fields={version:'qa-test',minimum:'15.0',notes:'Local integration test only',size:512};
+assert.equal((await request('admin/releases','GET',undefined,{})).status,401);
+assert.equal((await request('admin/releases','GET',undefined,{Cookie:'iris_session=forged'})).status,401);
+assert.equal((await request('admin/releases','GET',undefined,{Cookie:'iris_session='+token('other-user')})).status,401);
+assert.equal((await request('admin/releases','GET',undefined,{Cookie:'iris_session='+token('local-upload-qa',1)})).status,401);
+assert.equal((await request('admin/uploads','POST',fields,{Cookie:auth.Cookie,Origin:'https://other.invalid'})).status,403);
+assert.equal((await request('admin/uploads','POST',{...fields,version:'../../bad'})).status,400);
+assert.equal((await request('admin/uploads','POST',{...fields,size:2**32})).status,400);
+const before=await (await request('release')).json();
+let upload=await (await request('admin/uploads','POST',fields)).json();
+assert.ok(upload.id);
+assert.equal((await request(`admin/uploads/${upload.id}/complete`,'POST')).status,400);
+assert.equal((await request(`admin/uploads/${upload.id}/parts/1`,'PUT',new Uint8Array(20))).status,400);
+assert.equal((await request(`admin/uploads/${upload.id}/parts/2`,'PUT',new Uint8Array(512))).status,400);
+assert.equal((await request(`admin/uploads/${upload.id}/parts/1`,'PUT',new Uint8Array(512))).status,200);
+assert.equal((await request(`admin/uploads/${upload.id}/complete`,'POST')).status,400);
+assert.equal((await (await request('release')).json()).id,before.id);
+const dmg=new Uint8Array(await readFile(new URL('../public/releases/Iris-preview.dmg',import.meta.url)));
+upload=await (await request('admin/uploads','POST',{...fields,size:dmg.length})).json();
+for(let n=1,offset=0;offset<dmg.length;n++,offset+=upload.partSize)assert.equal((await request(`admin/uploads/${upload.id}/parts/${n}`,'PUT',dmg.slice(offset,offset+upload.partSize))).status,200);
+assert.equal((await request(`admin/uploads/${upload.id}/complete`,'POST')).status,200);
+assert.equal((await request(`admin/uploads/${upload.id}/complete`,'POST')).status,200,'completion retries are safe');
+assert.equal((await (await request('release')).json()).id,upload.id);
+const downloaded=await request('download');assert.equal(downloaded.status,200);assert.deepEqual(new Uint8Array(await downloaded.arrayBuffer()),dmg);
+const ranged=await request('download','GET',undefined,{Range:'bytes=-512'});assert.equal(ranged.status,206);assert.deepEqual(new Uint8Array(await ranged.arrayBuffer()),dmg.slice(-512));
+assert.equal((await request('download','GET',undefined,{Range:'bytes=999999999-'})).status,416);
+assert.equal((await request('admin/activate','POST',{id:'builtin-preview'})).status,200);
+assert.equal((await (await request('release')).json()).id,'builtin-preview');
+const pending=await (await request('admin/uploads','POST',fields)).json();assert.equal((await request(`admin/uploads/${pending.id}`,'DELETE')).status,200);
+assert.equal((await request(`admin/uploads/${pending.id}/complete`,'POST')).status,409);
+assert.equal((await request('admin/logout','POST')).status,204);
+console.log('PASS: authorization, session tampering/expiry, CSRF, invalid input, incomplete/invalid uploads, real DMG upload/download, retry, byte ranges, rollback and cancellation.');

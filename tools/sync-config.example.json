@@ -1,0 +1,8 @@
+{
+  "macos": "/path/to/Project IRIS",
+  "ios": "/path/to/iris-iphone",
+  "windows": "/path/to/iris-windows-v1",
+  "website": "/path/to/website-working-copy",
+  "app_repo": "/path/to/Project-Iris",
+  "website_repo": "/path/to/Project-Iris-Website"
+}

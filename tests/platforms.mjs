@@ -1,0 +1,18 @@
+import assert from 'node:assert/strict';
+import {detectPlatform,requestedPlatform,releasePlatform} from '../lib/platform.ts';
+assert.equal(detectPlatform('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)','MacIntel'),'macos');
+assert.equal(detectPlatform('Mozilla/5.0 (Windows NT 10.0; Win64; x64)','Win32'),'windows');
+assert.equal(detectPlatform('','Windows'),'windows');
+assert.equal(detectPlatform('','macOS'),'macos');
+assert.equal(detectPlatform('Mozilla/5.0 (X11; Linux x86_64)','Linux'),null);
+assert.equal(detectPlatform('iPhone; CPU iPhone OS 18_0 like Mac OS X','iPhone'),null);
+assert.equal(detectPlatform('Mozilla/5.0 (Macintosh; Intel Mac OS X)','MacIntel',5),null);
+assert.equal(detectPlatform('Android Mobile','Linux'),null);
+assert.equal(requestedPlatform('?platform=windows'),'windows');
+assert.equal(requestedPlatform('?platform=macos'),'macos');
+assert.equal(requestedPlatform('?platform=other'),null);
+assert.equal(releasePlatform({version:'1.0',platform:'windows'}),'windows');
+assert.equal(releasePlatform({version:'windows-1.0'}),'windows');
+assert.equal(releasePlatform({version:'2.0.32',platform:'macos'}),'macos');
+assert.equal(releasePlatform({version:'1.0-preview'}),'macos');
+console.log('Platform detection and release separation: 15 checks passed.');

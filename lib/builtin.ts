@@ -1,0 +1,1 @@
+export const builtin = { id:'builtin-preview',version:'1.0-preview',minimum:'15.0',size:6690107,created:'2026-11-02T00:00:00.000Z',notes:'Initial Iris preview from AriZe. Includes notch, desktop and floating modes, voice, connections, Create and Studio. Apple Silicon only. This preview is not Apple-notarized.',url:'/releases/Iris-preview.dmg',builtin:true };
