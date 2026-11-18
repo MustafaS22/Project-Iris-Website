@@ -34,7 +34,7 @@ export default function Download(){
     </div>
     <a className="text-link download-history" href={`/releases?platform=${primary}`}>Release notes &amp; older versions<ArrowUpRight size={15} aria-hidden="true"/></a>
    </div>
-   <figure className="download-stage"><div className="download-stage-bar" aria-hidden="true"><Face small/>Iris<span>by AriZe</span></div><img src="/images/desktop.png" alt="Iris’s desktop assistant and workspace"/></figure>
+   <figure className="download-stage"><div className="download-stage-bar" aria-hidden="true"><Face small/>Iris<span>by AriZe</span></div><img src="/images/current/desktop.jpg" alt="Iris’s desktop assistant and workspace"/></figure>
   </section>
   <aside className="phone-download-callout"><div><strong>Your companion, now on iPhone.</strong><p>Get the iPhone preview and follow the sideloading guide.</p></div><a className="text-link" href="/iphone">Iris for iPhone<ArrowUpRight size={16}/></a></aside>
   <section className="download-setup" aria-labelledby="setup-title"><h2 id="setup-title">Settle in on {platform==='macos'?'your Mac':platform==='windows'?'your PC':name}.</h2><ol>{steps.map(({icon:Icon,title,detail},i)=><li key={title}><div className="download-step-mark"><Icon size={22} aria-hidden="true"/><span>{i+1}</span></div><h3>{title}</h3><p>{detail}</p></li>)}</ol>

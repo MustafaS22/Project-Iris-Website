@@ -1,0 +1,16 @@
+.release-desk{background:#111213;color:#f6f1e9;min-height:100vh}
+.release-desk .admin-main{max-width:1150px;margin:auto}
+.release-desk .admin-heading h1{font-size:clamp(38px,5vw,56px);letter-spacing:-.055em;margin:0 0 7px}
+.release-desk .upload-panel,.release-desk .release-panel{background:#1b1c1e;border:1px solid #3b3936;border-radius:13px}
+.release-desk .admin-grid{align-items:start}
+.desk-platforms{display:flex;flex-wrap:wrap;gap:10px;margin:23px 0;padding:0;border:0;min-width:0}
+.desk-platforms legend{font-weight:750;margin-bottom:10px}
+.desk-platforms label{display:flex;align-items:center;gap:10px;min-width:170px;padding:10px 14px;border:1px solid #494745;border-radius:9px;cursor:pointer;font-size:14px;font-weight:700}
+.desk-platforms label:has(input:checked){background:#30261d;border-color:#d5a975}.desk-platforms input{accent-color:#eac294}.desk-platforms label small{display:block;color:#c4b7a7;font-size:11px;font-weight:500;margin-top:3px}
+.release-desk .dropzone{background:#242326;border-color:#615348;color:#eee0d0}.release-desk .dropzone.dragging{background:#3b3228}
+.release-desk .admin-grid input,.release-desk .admin-grid textarea{background:#131415;border-color:#5c5147}
+.desk-current{padding:13px 14px;margin:14px 0 22px;border-left:2px solid #eac294;background:#252320;display:grid;gap:4px}
+.desk-current span,.release-desk .release-panel h3{color:#c6b9a9;font-size:13px}
+.desk-history{max-height:520px;overflow:auto;overscroll-behavior:contain}.desk-history .admin-release{gap:12px}
+.release-desk .release-panel .text-link{display:flex;margin-top:20px}.desk-preview{margin-top:15px}
+@media(max-width:490px){.desk-platforms label{min-width:0;flex:1}.release-desk .admin-release .quiet-button{font-size:11px}}

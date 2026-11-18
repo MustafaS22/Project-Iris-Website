@@ -52,7 +52,7 @@ async function handle(request:Request) {
  if(path.join('/')==='admin/logout'&&method==='POST')return new Response(null,{status:204,headers:{'Set-Cookie':cookie('iris_session','',0),'Cache-Control':'no-store'}});
  if(!env.DB||!env.BUCKET)return json({error:'Release storage is unavailable.'},503);
  const db=env.DB,bucket=env.BUCKET;
- if(path.join('/')==='admin/releases'&&method==='GET'){const rows=await db.prepare('SELECT * FROM releases ORDER BY created DESC LIMIT 50').all<any>();return json({releases:rows.results.map(publicRelease),current:(await current())?.id??builtin.id});}
+ if(path.join('/')==='admin/releases'&&method==='GET'){const rows=await db.prepare('SELECT * FROM releases ORDER BY active DESC, created DESC').all<any>();return json({releases:rows.results.map(publicRelease),current:(await current())?.id??builtin.id});}
  if(path.join('/')==='admin/activate'&&method==='POST'){
   const {id}=await body(request);if(id===builtin.id){await db.prepare(clearActive()).run();return json({ok:true});}
   const release=await db.prepare('SELECT * FROM releases WHERE id=?').bind(String(id)).first<any>();if(!release||!await bucket.head(release.key))return json({error:'That release file is not available.'},404);

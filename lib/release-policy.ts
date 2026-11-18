@@ -1,6 +1,7 @@
 export const PART_SIZE = 8 * 1024 * 1024;
 export const MAX_SIZE = 2 * 1024 * 1024 * 1024;
 export function releaseFields(value: any) {
+ if (value.platform !== undefined && value.platform !== 'macos' && value.platform !== 'windows') throw new Error('Choose macOS or Windows.');
  const platform = value.platform === 'windows' ? 'windows' : 'macos';
  const inputVersion = String(value.version ?? '').trim();
  if(platform === 'windows' && !['1.0','1.0.0'].includes(inputVersion)) throw new Error('Enter Windows version 1.0; this edition is frozen.');
@@ -10,7 +11,7 @@ export function releaseFields(value: any) {
  const notes = String(value.notes ?? '').trim();
  const size = Number(value.size);
  if (!/^[a-zA-Z0-9][a-zA-Z0-9.\-+]{0,39}$/.test(version)) throw new Error('Enter a version such as 1.0 or 1.1-beta.');
- if (!/^\d{1,2}\.\d{1,2}(\.\d{1,2})?$/.test(minimum)) throw new Error('Enter the minimum macOS version, such as 15.0.');
+ if (!/^\d{1,2}\.\d{1,2}(\.\d{1,2})?$/.test(minimum)) throw new Error(platform === 'windows' ? 'Enter the minimum Windows version, such as 11.0.' : 'Enter the minimum macOS version, such as 15.0.');
  if (!notes || notes.length > 5000) throw new Error('Release notes must contain 1–5,000 characters.');
  if (!Number.isSafeInteger(size) || size < 512 || size > MAX_SIZE) throw new Error('Choose an installer between 512 bytes and 2 GB.');
  const update=platform==='macos'?updateMetadata(value):undefined;
