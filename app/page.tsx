@@ -1,34 +1,28 @@
 'use client';
 
-import { ArrowDown, ArrowRight, Command, FileText, Mic, PanelTop, Play } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { ArrowDown, ArrowRight, Pause, Play } from 'lucide-react';
 import { Face, Footer, Nav } from './components';
 import { usePlatform } from './use-platform';
+import { ProductTour } from './product-tour';
 import './home.css';
-
-const features = [
-  {
-    title: 'Ask without switching apps',
-    text: 'Open Iris from the notch to type or speak. Move into the desktop workspace when a quick question becomes a longer conversation.',
-    icon: PanelTop,
-  },
-  {
-    title: 'Work from your own material',
-    text: 'Attach an image or document, or type @ to choose a connected source. Use Knowledge to find the notes and files you’ve brought into Iris.',
-    icon: FileText,
-  },
-  {
-    title: 'Get help on your screen',
-    text: 'Use floating Iris to talk through what you’re looking at. With screen access and a supported model, it can point out where to click or explain a diagram.',
-    icon: Mic,
-  },
-];
 
 export default function Home() {
   const platform = usePlatform();
+  const [paused, setPaused] = useState(false);
+  const [reduced, setReduced] = useState(false);
+  useEffect(() => {
+    const query = matchMedia('(prefers-reduced-motion: reduce)');
+    const sync = () => setReduced(query.matches);
+    sync();
+    query.addEventListener('change', sync);
+    return () => query.removeEventListener('change', sync);
+  }, []);
+  const animated = !paused && !reduced;
   const download = platform ? `/download?platform=${platform}` : '/download';
   const device = platform === 'macos' ? 'Mac' : platform === 'windows' ? 'PC' : 'computer';
 
-  return <><Nav/><main className="iris-product">
+  return <><Nav/><main className="iris-product" data-motion={animated ? "on" : "off"}>
     <section className="product-hero product-width" aria-labelledby="product-title">
       <div className="product-intro">
         <div className="product-signature"><Face small/> Iris by AriZe</div>
@@ -40,22 +34,17 @@ export default function Home() {
         </div>
         <p className="product-platforms">macOS 15+ on Apple Silicon <span>·</span> <a href="/windows">Windows 1.0 test edition</a></p>
       </div>
-      <figure className="product-hero-shot">
-        <img src="/images/current/desktop.jpg" width="1700" height="1182" alt="Iris for Mac desktop chat, with tools for websites, documents, and knowledge sources" fetchPriority="high"/>
-        <figcaption><span>Iris for macOS</span><span><Command size={13}/> Open with a shortcut</span></figcaption>
-      </figure>
-    </section>
-
-    <section className="product-features product-width" id="features" aria-labelledby="feature-title">
-      <h2 id="feature-title">What you can do with Iris</h2>
-      <div className="product-feature-grid">{features.map(({title,text,icon: Icon}) =>
-        <article key={title}><Icon size={24} aria-hidden="true"/><h3>{title}</h3><p>{text}</p></article>
-      )}</div>
-      <div className="product-gallery">
-        <figure><div className="product-notch-stage"><img src="/images/current/notch.jpg" width="1160" height="596" loading="lazy" alt="Iris notch chat with its attachment, source and microphone controls"/></div><figcaption><strong>Notch chat</strong><span>Quick questions by voice or keyboard</span></figcaption></figure>
-        <figure><div className="product-knowledge-stage"><img src="/images/current/knowledge.jpg" width="1600" height="1057" loading="lazy" alt="Iris Knowledge library with sample photography notes and a Scan now button"/></div><figcaption><strong>Knowledge</strong><span>Browse your sources and save useful details to memory</span></figcaption></figure>
+      <div className="product-character">
+        <div className="product-orbit" aria-hidden="true"><span/><span/></div>
+        <img className="product-avatar" src="/images/tour/avatar.png" width="272" height="216" alt="Iris’s floating avatar" fetchPriority="high"/>
+        <div className="product-character-shadow" aria-hidden="true"/>
+        {!reduced && <button className="product-motion" type="button" onClick={() => setPaused(value => !value)}>
+          {paused ? <Play size={14}/> : <Pause size={14}/>} {paused ? 'Resume motion' : 'Pause motion'}
+        </button>}
       </div>
     </section>
+
+    <ProductTour animated={animated}/>
 
     <section className="product-setup product-width" id="how-it-works">
       <div><h2>Set up Iris your way.</h2><p>Choose OpenAI, Gemini, or a local model through LM Studio. Pick a voice, then grant Iris access to the sources and folders you want it to use.</p><a href="/privacy">Read about privacy <ArrowRight size={16}/></a></div>
