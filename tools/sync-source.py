@@ -156,6 +156,23 @@ This is the website repository. App code belongs in MustafaS22/Project-Iris. Kee
 
 After any published website source change, sync the tested source to this repository, audit for credentials and user data, commit and push main. Never commit server secrets, actual OAuth secrets, private signing keys, local caches, production hosting credentials or installer binaries. Preserve existing app-release records and platform policies.
 ''')
+    # Galleries are curated in the public repositories and carry forward on source sync.
+    galleries = {
+        'apps': [('assistant', 'Desktop chat'), ('notch', 'Notch chat'), ('knowledge', 'Knowledge library')],
+        'website': [('homepage', 'Homepage'), ('downloads', 'Downloads'), ('release-notes', 'Release notes')],
+    }
+    screenshots = []
+    for name, caption in galleries[kind]:
+        relative = f'docs/screenshots/{name}.jpg'
+        screenshot = repo / relative
+        if screenshot.is_file() and not screenshot.is_symlink():
+            put(relative, screenshot.read_bytes())
+            screenshots.append(f'### {caption}\n\n![{caption}]({relative})')
+    if screenshots:
+        readme = files['README.md'].decode()
+        heading = '## Build and test' if kind == 'apps' else '## Development'
+        gallery = '## Screenshots\n\n' + '\n\n'.join(screenshots) + '\n\n'
+        put('README.md', readme.replace(heading, gallery + heading, 1))
     put('.gitignore',IGNORE)
     put('tools/sync-source.py',Path(__file__).read_bytes())
     put('tools/sync-config.example.json',json.dumps({'macos':'/path/to/Project IRIS','ios':'/path/to/iris-iphone','windows':'/path/to/iris-windows-v1','website':'/path/to/website-working-copy','app_repo':'/path/to/Project-Iris','website_repo':'/path/to/Project-Iris-Website'},indent=2))

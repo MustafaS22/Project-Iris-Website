@@ -4,6 +4,20 @@ The official Iris website: homepage, device-aware downloads, separate Mac/Window
 
 [Live website](https://projectiris.lovelyabbey.chatgpt.site) · [App source](https://github.com/MustafaS22/Project-Iris)
 
+## Screenshots
+
+### Homepage
+
+![Homepage](docs/screenshots/homepage.jpg)
+
+### Downloads
+
+![Downloads](docs/screenshots/downloads.jpg)
+
+### Release notes
+
+![Release notes](docs/screenshots/release-notes.jpg)
+
 ## Development
 
 Node 24+ is recommended. Run `npm ci`, then `npm run dev`. Type-check with `npx tsc --noEmit`; focused checks use `node --experimental-strip-types tests/platforms.mjs` and `node --experimental-strip-types tests/appcast.mjs`. Build with `npm run build`.
