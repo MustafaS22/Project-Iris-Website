@@ -1,37 +1,57 @@
-# Iris Website by AriZe
+![Iris by AriZe. Meet Iris. Get Iris.](docs/readme/banner.jpg)
 
-The official Iris website: homepage, device-aware downloads, separate Mac/Windows release histories, Google-authenticated release desk, and signed Sparkle update feed.
+<h1 align="center">Iris Website</h1>
 
-[Live website](https://projectiris.lovelyabbey.chatgpt.site) · [App source](https://github.com/MustafaS22/Project-Iris)
+<p align="center">The public home for Iris, from the interactive tour to the latest download.</p>
 
-## Screenshots
+<p align="center">
+  <a href="https://projectiris.lovelyabbey.chatgpt.site/"><strong>Visit the website</strong></a> ·
+  <a href="https://projectiris.lovelyabbey.chatgpt.site/download">Downloads</a> ·
+  <a href="https://projectiris.lovelyabbey.chatgpt.site/releases">Release notes</a> ·
+  <a href="https://github.com/MustafaS22/Project-Iris">App source</a>
+</p>
 
-### Homepage
+## Explore the site
 
-![Homepage](docs/screenshots/homepage.jpg)
+![The Iris homepage with a floating avatar and download links](docs/screenshots/homepage.jpg)
 
-### Interactive feature tour
+**Interactive feature tour.** Scroll or choose a feature to see nine Iris workflows, including the desktop app, notch, floating mode, and drafting.
 
-![Interactive feature tour](docs/screenshots/feature-tour.jpg)
+![The interactive tour showing the expanded notch over a warm desktop backdrop](docs/screenshots/feature-tour.jpg)
 
-### Downloads
+| Platform-aware downloads | Release history |
+| :---: | :---: |
+| ![Download page with macOS and Windows choices](docs/screenshots/downloads.jpg) | ![Release notes with separate tabs for macOS and Windows](docs/screenshots/release-notes.jpg) |
 
-![Downloads](docs/screenshots/downloads.jpg)
+## How it fits together
 
-### Release notes
+| Part | What it does |
+| --- | --- |
+| **Product pages** | Introduce Iris, show how it works, and guide visitors through installation on Mac, Windows, or iPhone. |
+| **Downloads and release notes** | Suggest the download for the visitor’s device, keep the other platform available, and list older macOS and Windows builds separately. |
+| **Release desk** | Lets the team sign in with Google, choose a platform, and publish an installer with its release notes. |
+| **Sparkle feed** | Delivers signed macOS releases to Iris’s in-app updater. |
 
-![Release notes](docs/screenshots/release-notes.jpg)
+## Run it locally
 
-## Development
+Node 24 or later is recommended.
 
-Node 24+ is recommended. Run `npm ci`, then `npm run dev`. Type-check with `npx tsc --noEmit`; focused checks use `node --experimental-strip-types tests/platforms.mjs` and `node --experimental-strip-types tests/appcast.mjs`. Build with `npm run build`.
+```sh
+npm ci
+npm run dev
+```
 
-Production is a Cloudflare Worker with D1 binding `DB` and R2 binding `BUCKET`. Configure your own Google OAuth client, admin email and session secret as server environment variables. Real runtime secrets and production hosting identity are not included. The fallback admin address in this public source is a placeholder. Create your own hosting project from `.openai/hosting.example.json`; preserve the existing owner's deployment when using the internal working copy.
+```sh
+npx tsc --noEmit
+node --experimental-strip-types tests/platforms.mjs
+node --experimental-strip-types tests/appcast.mjs
+npm run build
+```
 
-Generated installers (`.dmg`, `.exe`, `.ipa`) and dependency/build folders are not source files and are excluded. Restore desired legacy/iPhone download assets separately or update their URLs; current Mac/Windows releases are served from R2 by the release desk. Existing public downloads remain on the live website.
+The site uses React and Vinext on a Cloudflare Worker. **D1** stores release records and **R2** serves installers. For a separate deployment, start with the [hosting example](.openai/hosting.example.json) and supply your own Google OAuth client, admin email, and session secret as server settings. Production credentials and installer binaries are excluded from this repository. Older static downloads and the iPhone preview need their own assets or URLs.
 
-## Maintenance
+## Project links
 
-This repository is a public source mirror. After publishing a website update, synchronize the tested source, audit, commit and push it here. `SOURCE_MANIFEST.json` identifies the snapshot; `tools/sync-source.py` is the repeatable maintainer tool. App code lives in the separate Project-Iris repository.
+[Report a website issue](https://github.com/MustafaS22/Project-Iris-Website/issues) · [Source manifest](SOURCE_MANIFEST.json) · [Source sync](tools/sync-source.py)
 
-Developed by **AriZe**. Third-party notices retain their original terms; no additional blanket source license is granted.
+Built by **AriZe**. Third-party assets and dependencies retain their own terms. This repository carries no additional blanket license.

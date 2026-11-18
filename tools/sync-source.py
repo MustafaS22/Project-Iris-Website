@@ -168,7 +168,13 @@ After any published website source change, sync the tested source to this reposi
         if screenshot.is_file() and not screenshot.is_symlink():
             put(relative, screenshot.read_bytes())
             screenshots.append(f'### {caption}\n\n![{caption}]({relative})')
-    if screenshots:
+    # Keep the public repo's branded README and artwork across release syncs.
+    readme_path = repo / 'README.md'
+    banner_path = repo / 'docs/readme/banner.jpg'
+    if all(path.is_file() and not path.is_symlink() for path in (readme_path, banner_path)):
+        put('README.md', readme_path.read_bytes())
+        put('docs/readme/banner.jpg', banner_path.read_bytes())
+    elif screenshots:
         readme = files['README.md'].decode()
         heading = '## Build and test' if kind == 'apps' else '## Development'
         gallery = '## Screenshots\n\n' + '\n\n'.join(screenshots) + '\n\n'
