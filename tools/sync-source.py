@@ -159,7 +159,7 @@ After any published website source change, sync the tested source to this reposi
     # Galleries are curated in the public repositories and carry forward on source sync.
     galleries = {
         'apps': [('assistant', 'Desktop chat'), ('notch', 'Notch chat'), ('knowledge', 'Knowledge library')],
-        'website': [('homepage', 'Homepage'), ('downloads', 'Downloads'), ('release-notes', 'Release notes')],
+        'website': [('homepage', 'Homepage'), ('feature-tour', 'Interactive feature tour'), ('downloads', 'Downloads'), ('release-notes', 'Release notes')],
     }
     screenshots = []
     for name, caption in galleries[kind]:

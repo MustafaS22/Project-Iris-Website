@@ -1,15 +1,16 @@
 'use client';
 
+import { AppWindow, AudioLines, FileText, Folder, Wifi } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
 const scenes = [
-  { label: 'Desktop', title: 'Make room for a longer conversation.', text: 'Ask a question, attach a file, or type @ to bring a source or tool into chat. Pick up previous conversations from the sidebar.', image: '/images/tour/desktop.jpg', alt: 'Iris desktop chat and composer' },
-  { label: 'Notch', title: 'Ask without leaving your work.', text: 'Summon Iris at the top of your screen. Type or speak, attach an image, and open the full conversation when you need more space.', image: '/images/tour/notch.jpg', alt: 'Expanded Iris notch with text, microphone and attachment controls' },
-  { label: 'Floating', title: 'Get help right where you’re looking.', text: 'Keep Iris beside the app you’re using. With screen access and a supported model, Iris can point to a control, label a diagram, or sketch an explanation.', image: '/images/tour/floating.jpg', alt: 'Floating Iris with the guide-in-an-app control', portrait: true },
+  { label: 'Desktop', title: 'Make room for a longer conversation.', text: 'Ask a question, attach a file, or type @ to bring a source or tool into chat. Pick up previous conversations from the sidebar.', image: '/images/tour/desktop.webp', alt: 'Iris desktop chat and composer' },
+  { label: 'Notch', title: 'Ask without leaving your work.', text: 'Summon Iris at the top of your screen. Type or speak, attach an image, and open the full conversation when you need more space.', image: '/images/tour/notch.webp', placement: 'notch', alt: 'Expanded Iris notch with text, microphone and attachment controls' },
+  { label: 'Floating', title: 'Get help right where you’re looking.', text: 'Keep Iris beside the app you’re using. With screen access and a supported model, Iris can point to a control, label a diagram, or sketch an explanation.', image: '/images/tour/floating.webp', alt: 'Floating Iris with the guide-in-an-app control', placement: 'floating' },
   { label: 'Drafting', title: 'Write in the field you’re already in.', text: 'Double-tap your drafting shortcut to rewrite selected text or start a reply from the context you share. Edit the result before sending.', image: '/images/tour/drafting.jpg', alt: 'The Iris onboarding lesson for Double Tap drafting in TextEdit' },
   { label: 'Knowledge', title: 'Give answers more context.', text: 'Bring in files, notes, and selected connections. Use @ to reference a source in chat, or scan enabled sources to save useful details to memory.', image: '/images/tour/connections.jpg', alt: 'Iris Knowledge showing Scan now and the Connections section' },
   { label: 'Agents', title: 'Hand off the longer jobs.', text: 'Start a specialist agent for a larger task, then follow its progress while you keep using Iris. Give each agent a specific brief.', image: '/images/tour/agents.jpg', alt: 'Iris Agents showing several agents and an example task' },
-  { label: 'Create', title: 'Turn a prompt into something you can open.', text: 'Choose a creation tool with @ in chat. Ask for a document, website, or image and open the resulting file from the conversation.', image: '/images/tour/desktop.jpg', alt: 'Iris chat with Website and Document creation tools' },
+  { label: 'Create', title: 'Turn a prompt into something you can open.', text: 'Choose a creation tool with @ in chat. Ask for a document, website, or image and open the resulting file from the conversation.', image: '/images/tour/desktop.webp', alt: 'Iris chat with Website and Document creation tools' },
   { label: 'Library', title: 'Find what you made again.', text: 'Reopen generated files, projects, and study material from the Library. Bring a saved item back into chat to keep working on it.', image: '/images/tour/library.jpg', alt: 'Iris Library with Files, Study, Projects and Drafts categories' },
   { label: 'Voice & setup', title: 'Choose how Iris listens and answers.', text: 'Set a voice and keyboard shortcuts, then choose OpenAI, Gemini, or a local model through LM Studio. Manage screen and folder access in Settings.', image: '/images/tour/voice.jpg', alt: 'Iris onboarding with Gemini, VoiceBox, and macOS voice options' },
 ];
@@ -78,8 +79,17 @@ export function ProductTour({ animated }: { animated: boolean }) {
             <p>{scene.text}</p>
           </div>
           <div className="tour-media">
+            <div className="scene-wallpaper" aria-hidden="true"><i/><i/><i/></div>
+            <div className="tour-menu" aria-hidden="true">
+              <span><b>Iris</b><span>File</span><span>View</span></span>
+              <span><AudioLines size={10}/><Wifi size={11}/></span>
+            </div>
+            <div className="tour-dock" aria-hidden="true">
+              <span><Folder/></span><span><AppWindow/></span><span><FileText/></span>
+              <span className="tour-dock-iris"><i/><i/></span>
+            </div>
             {scenes.map((item, index) =>
-              <div key={item.label} className={'tour-image' + (index === active ? ' is-current' : '') + (item.portrait ? ' is-portrait' : '')} aria-hidden={index !== active}>
+              <div key={item.label} className={'tour-image' + (index === active ? ' is-current' : '') + (item.placement ? ' tour-image--' + item.placement : '')} aria-hidden={index !== active}>
                 <img src={item.image} alt={item.alt} loading={index ? 'lazy' : 'eager'} decoding="async"/>
               </div>
             )}
