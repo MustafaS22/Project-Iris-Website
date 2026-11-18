@@ -8,15 +8,19 @@ The official Iris website: homepage, device-aware downloads, separate Mac/Window
 
 ### Homepage
 
-![Homepage](docs/screenshots/homepage.jpg)
+![Iris homepage with the floating avatar and warm dark theme](docs/screenshots/homepage.jpg)
+
+### Interactive feature tour
+
+![The homepage feature tour showing Iris in the Mac notch](docs/screenshots/feature-tour.jpg)
 
 ### Downloads
 
-![Downloads](docs/screenshots/downloads.jpg)
+![Iris download page with macOS and Windows options](docs/screenshots/downloads.jpg)
 
 ### Release notes
 
-![Release notes](docs/screenshots/release-notes.jpg)
+![Iris release notes with macOS and Windows tabs](docs/screenshots/release-notes.jpg)
 
 ## Development
 
